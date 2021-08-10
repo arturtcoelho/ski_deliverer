@@ -6,14 +6,18 @@ from math import degrees, inf, pi, radians, sin, cos
 
 import matplotlib.pyplot as plt
 
-import numpy
+import numpy as np
 from numpy import linspace, meshgrid
+from numpy.lib.function_base import select
 
 # import ROS
 import rclpy
+from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
+from gazebo_msgs.srv._get_entity_state import GetEntityState
 
+from time import sleep
 
 # Info to print graph
 N = 100
@@ -42,8 +46,8 @@ class Gauss():
 
     A = 200
     C = -1
-    sigmaX = 20
-    sigmaY = 20
+    sigmaX = 15
+    sigmaY = 15
     sigmaX2 = sigmaX**2
     sigmaY2 = sigmaY**2
 
@@ -54,20 +58,20 @@ class Gauss():
     def fun(self, X, Y):
         x_part = (X - self.X0)**2 / self.sigmaX2
         y_part = (Y - self.Y0)**2 / self.sigmaY2
-        Z = self.A * numpy.exp(self.C * (x_part + y_part))
+        Z = self.A * np.exp(self.C * (x_part + y_part))
         return Z
 
     def fun_x(self, X, Y):
         mult = 2*(X - self.X0) / self.sigmaX2
         x_part = (X - self.X0)**2 / self.sigmaX2
         y_part = (Y - self.Y0)**2 / self.sigmaY2
-        return self.A * mult * numpy.exp(self.C * (x_part + y_part)) 
+        return self.A * mult * np.exp(self.C * (x_part + y_part)) 
 
     def fun_y(self, X, Y):
         mult = 2*(Y - self.Y0) / self.sigmaY2
         x_part = (X - self.X0)**2 / self.sigmaX2
         y_part = (Y - self.Y0)**2 / self.sigmaY2
-        return self.A * mult * numpy.exp(self.C * (x_part + y_part)) 
+        return self.A * mult * np.exp(self.C * (x_part + y_part)) 
 
 class Cone():
 
@@ -82,13 +86,13 @@ class Cone():
         self.Y0 = Y0
 
     def fun(self, X, Y):
-        return numpy.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
+        return np.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
 
     def fun_x(self, X, Y):
-        return self.k * (X - self.X0) / numpy.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
+        return self.k * (X - self.X0) / np.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
 
     def fun_y(self, X, Y):
-        return self.k * (Y - self.Y0) / numpy.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
+        return self.k * (Y - self.Y0) / np.sqrt(self.k * ((X - self.X0)**2 + (Y - self.Y0)**2))
 
 test_points = []
 
@@ -114,6 +118,20 @@ def curve_l(X, Y, destiny, points):
 def vec_dist(a, b):
     return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2) 
 
+def rotate_point(x, y, angle):
+    qx = math.cos(angle) * (x) - math.sin(angle) * (y)
+    qy = math.sin(angle) * (x) + math.cos(angle) * (y)
+    return qx, qy
+
+def quaternion_to_euler_angle(w, x, y, z):
+    ysqr = y * y
+
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x * x + ysqr)
+    X = np.degrees(np.arctan2(t0, t1))
+
+    return X
+
 def full_ski(f, org, des, test_points):
     k = 1
     probe = org
@@ -127,12 +145,9 @@ def full_ski(f, org, des, test_points):
 
     return pl
 
-def test(test_points):
-    destiny = (0, 200) # 0, 0 and X0, Y0
+def test(test_points, des):
+    destiny = (des[0], des[1]) # 0, 0 and X0, Y0
     curve_map = curve(X, Y, [(t[0]*1.5, t[1]*1.5) for t in test_points], destiny)
-
-    ang = curve_l(0, 0, destiny, test_points)
-    print(degrees(ang))
 
     plt.imshow(curve_map, cmap='viridis', aspect=1, origin='lower')
     plt.colorbar()
@@ -152,9 +167,27 @@ def timer_callback():
 
     k = 100
     points = [(n[0] * k, n[1] * k) for n in arc_points]
-    # test(points)
 
-    ang = curve_l(0, 0, (0, 200), points)
+    global client
+
+    client.send_request()
+    while (True):
+        rclpy.spin_once(client)
+        if (client.future.done()):
+            break
+    res = client.future.result()
+    
+    bot_ang = radians(quaternion_to_euler_angle(
+        res.state.pose.orientation.x,
+        res.state.pose.orientation.y,
+        res.state.pose.orientation.z,
+        res.state.pose.orientation.w ))
+
+    destx, desty = rotate_point(0, 200, bot_ang)
+
+    # test(points, (destx, desty))
+
+    ang = curve_l(0, 0, (destx, desty), points)
 
     msg = Twist()
 
@@ -162,6 +195,19 @@ def timer_callback():
     msg.angular.z = (ang-pi/2)/2.5
 
     publisher.publish(msg)
+
+class Client(Node):
+
+    def __init__(self):
+        super().__init__('Client')
+        self.cli = self.create_client(GetEntityState, 'demo/get_entity_state')
+        while not self.cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('service not available, waiting again...')
+        self.req = GetEntityState.Request()
+
+    def send_request(self):
+        self.req.name = 'turtlebot3_waffle_pi'
+        self.future = self.cli.call_async(self.req)
 
 def main(args=None):
 
@@ -172,6 +218,9 @@ def main(args=None):
 
     global node
     node = rclpy.create_node('wanderbot')
+
+    global client
+    client = Client()
 
     global publisher
     publisher = node.create_publisher(Twist, 'cmd_vel', rclpy.qos.qos_profile_system_default)
