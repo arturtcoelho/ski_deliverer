@@ -44,10 +44,10 @@ class Gauss():
     sigma = 'wideness' of curve (standart deviation)
     """
 
-    A = 200
+    A = 500
     C = -1
-    sigmaX = 15
-    sigmaY = 15
+    sigmaX = 32.5
+    sigmaY = 32.5
     sigmaX2 = sigmaX**2
     sigmaY2 = sigmaY**2
 
@@ -79,7 +79,7 @@ class Cone():
     This class contains a cone function and its derivatives
     """
 
-    k = 2500
+    k = 4000
 
     def __init__(self, X0, Y0):
         self.X0 = X0
@@ -147,7 +147,7 @@ def full_ski(f, org, des, test_points):
 
 def test(test_points, des):
     destiny = (des[0], des[1]) # 0, 0 and X0, Y0
-    curve_map = curve(X, Y, [(t[0]*1.5, t[1]*1.5) for t in test_points], destiny)
+    curve_map = curve(X, Y, [(t[0], t[1]) for t in test_points], destiny)
 
     plt.imshow(curve_map, cmap='viridis', aspect=1, origin='lower')
     plt.colorbar()
@@ -162,7 +162,7 @@ SPEED = 0.1
 
 def timer_callback():
 
-    arc = [(i, n) for i , n in enumerate(scan) if n != inf]
+    arc = [((i+90)%360, n) for i , n in enumerate(scan) if n != inf]
     arc_points = [(-sin(radians(n[0])) * n[1], cos(radians(n[0])) * n[1]) for n in arc]
 
     k = 100
@@ -183,16 +183,16 @@ def timer_callback():
         res.state.pose.orientation.z,
         res.state.pose.orientation.w ))
 
-    destx, desty = rotate_point(0, 200, bot_ang)
+    destx, desty = rotate_point(0, 1, bot_ang)
 
-    # test(points, (destx, desty))
-
+    test(points, (destx, desty))
+    exit()
     ang = curve_l(0, 0, (destx, desty), points)
 
     msg = Twist()
 
     msg.linear.x = SPEED
-    msg.angular.z = (ang-pi/2)/2.5
+    msg.angular.z = -ang/4
 
     publisher.publish(msg)
 
