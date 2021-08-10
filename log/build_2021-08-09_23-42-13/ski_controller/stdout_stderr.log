@@ -1,0 +1,17 @@
+running develop
+running egg_info
+writing ski_controller.egg-info/PKG-INFO
+writing dependency_links to ski_controller.egg-info/dependency_links.txt
+writing entry points to ski_controller.egg-info/entry_points.txt
+writing requirements to ski_controller.egg-info/requires.txt
+writing top-level names to ski_controller.egg-info/top_level.txt
+reading manifest file 'ski_controller.egg-info/SOURCES.txt'
+writing manifest file 'ski_controller.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/site.py
+Creating /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski-controller.egg-link (link to .)
+Installing ski script to /home/coelho/ski_deliverer_ws/install/ski_controller/lib/ski_controller
+
+Installed /home/coelho/ski_deliverer_ws/build/ski_controller
+running install_data
+copying package.xml -> /home/coelho/ski_deliverer_ws/install/ski_controller/share/ski_controller

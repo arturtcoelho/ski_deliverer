@@ -1,0 +1,19 @@
+[0.147s] Invoking command in '/home/coelho/ski_deliverer_ws/build/ski_controller': PYTHONPATH=/home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/coelho/ski_deliverer_ws/install/ski_controller --editable --build-directory /home/coelho/ski_deliverer_ws/build/ski_controller/build --no-deps install_data --install-dir /home/coelho/ski_deliverer_ws/install/ski_controller
+[0.287s] running develop
+[0.362s] running egg_info
+[0.362s] writing ski_controller.egg-info/PKG-INFO
+[0.362s] writing dependency_links to ski_controller.egg-info/dependency_links.txt
+[0.362s] writing entry points to ski_controller.egg-info/entry_points.txt
+[0.362s] writing requirements to ski_controller.egg-info/requires.txt
+[0.363s] writing top-level names to ski_controller.egg-info/top_level.txt
+[0.383s] reading manifest file 'ski_controller.egg-info/SOURCES.txt'
+[0.384s] writing manifest file 'ski_controller.egg-info/SOURCES.txt'
+[0.424s] running build_ext
+[0.424s] Creating /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/site.py
+[0.426s] Creating /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski-controller.egg-link (link to .)
+[0.427s] Installing ski script to /home/coelho/ski_deliverer_ws/install/ski_controller/lib/ski_controller
+[0.427s] 
+[0.427s] Installed /home/coelho/ski_deliverer_ws/build/ski_controller
+[0.427s] running install_data
+[0.427s] copying package.xml -> /home/coelho/ski_deliverer_ws/install/ski_controller/share/ski_controller
+[0.449s] Invoked command in '/home/coelho/ski_deliverer_ws/build/ski_controller' returned '0': PYTHONPATH=/home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py develop --prefix /home/coelho/ski_deliverer_ws/install/ski_controller --editable --build-directory /home/coelho/ski_deliverer_ws/build/ski_controller/build --no-deps install_data --install-dir /home/coelho/ski_deliverer_ws/install/ski_controller

@@ -1,0 +1,38 @@
+running egg_info
+creating ../../build/ski_controller/ski_controller.egg-info
+writing ../../build/ski_controller/ski_controller.egg-info/PKG-INFO
+writing dependency_links to ../../build/ski_controller/ski_controller.egg-info/dependency_links.txt
+writing entry points to ../../build/ski_controller/ski_controller.egg-info/entry_points.txt
+writing requirements to ../../build/ski_controller/ski_controller.egg-info/requires.txt
+writing top-level names to ../../build/ski_controller/ski_controller.egg-info/top_level.txt
+writing manifest file '../../build/ski_controller/ski_controller.egg-info/SOURCES.txt'
+reading manifest file '../../build/ski_controller/ski_controller.egg-info/SOURCES.txt'
+writing manifest file '../../build/ski_controller/ski_controller.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/coelho/ski_deliverer_ws/build/ski_controller/build
+creating /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib
+creating /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller
+copying ski_controller/ski_controller.py -> /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller
+copying ski_controller/__init__.py -> /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller
+copying ski_controller/ski.py -> /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller
+running install
+running install_lib
+creating /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller
+copying /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller/ski_controller.py -> /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller
+copying /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller/__init__.py -> /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller
+copying /home/coelho/ski_deliverer_ws/build/ski_controller/build/lib/ski_controller/ski.py -> /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller
+byte-compiling /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller/ski_controller.py to ski_controller.cpython-38.pyc
+byte-compiling /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller/__init__.py to __init__.cpython-38.pyc
+byte-compiling /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller/ski.py to ski.cpython-38.pyc
+running install_data
+creating /home/coelho/ski_deliverer_ws/install/ski_controller/share/ament_index
+creating /home/coelho/ski_deliverer_ws/install/ski_controller/share/ament_index/resource_index
+creating /home/coelho/ski_deliverer_ws/install/ski_controller/share/ament_index/resource_index/packages
+copying resource/ski_controller -> /home/coelho/ski_deliverer_ws/install/ski_controller/share/ament_index/resource_index/packages
+copying package.xml -> /home/coelho/ski_deliverer_ws/install/ski_controller/share/ski_controller
+running install_egg_info
+Copying ../../build/ski_controller/ski_controller.egg-info to /home/coelho/ski_deliverer_ws/install/ski_controller/lib/python3.8/site-packages/ski_controller-0.0.0-py3.8.egg-info
+running install_scripts
+Installing ski script to /home/coelho/ski_deliverer_ws/install/ski_controller/lib/ski_controller
+writing list of installed files to '/home/coelho/ski_deliverer_ws/build/ski_controller/install.log'

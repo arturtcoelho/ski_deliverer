@@ -1,0 +1,3 @@
+[console_scripts]
+ski = ski_controller.ski:main
+
