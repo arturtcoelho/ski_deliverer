@@ -2,7 +2,7 @@
 
 # math imports
 import math
-from math import inf, radians, sin, cos
+from math import degrees, inf, pi, radians, sin, cos
 
 import matplotlib.pyplot as plt
 
@@ -16,10 +16,10 @@ from sensor_msgs.msg import LaserScan
 
 
 # Info to print graph
-N = 128
+N = 100
 
-ranx = [-500, 500]
-rany = [-500, 500]
+ranx = [-200, 200]
+rany = [-200, 200]
 
 x = linspace(ranx[0], ranx[1], N)
 y = linspace(rany[0], rany[1], N)
@@ -40,10 +40,10 @@ class Gauss():
     sigma = 'wideness' of curve (standart deviation)
     """
 
-    A = 150
+    A = 200
     C = -1
-    sigmaX = 16
-    sigmaY = 16
+    sigmaX = 20
+    sigmaY = 20
     sigmaX2 = sigmaX**2
     sigmaY2 = sigmaY**2
 
@@ -75,7 +75,7 @@ class Cone():
     This class contains a cone function and its derivatives
     """
 
-    k = 100
+    k = 2500
 
     def __init__(self, X0, Y0):
         self.X0 = X0
@@ -92,8 +92,8 @@ class Cone():
 
 test_points = []
 
-def curve(X, Y, points):
-    cone = Cone(0, 0)
+def curve(X, Y, points, des):
+    cone = Cone(des[0], des[1])
     z = cone.fun(X, Y)
     for p in points:
         gau = Gauss(p[0], p[1])
@@ -114,12 +114,12 @@ def curve_l(X, Y, destiny, points):
 def vec_dist(a, b):
     return math.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2) 
 
-def ski(f, org, des):
+def full_ski(f, org, des, test_points):
     k = 1
     probe = org
     pl = [probe]
     i = 0
-    while vec_dist(probe, des) > k * 2 and i < 300:
+    while vec_dist(probe, des) > k * 2 and i < 1000:
         a = f(probe[0], probe[1], des, test_points)
         probe = (probe[0] + math.cos(a) * k, probe[1] + math.sin(a) * k)
         pl += [probe]
@@ -127,16 +127,14 @@ def ski(f, org, des):
 
     return pl
 
-def test():
-    # origin, destiny = (0, 0), (75, 65) # 0, 0 and X0, Y0
-    curve_map = curve(X, Y, test_points)
-    # curve_points = ski(curve_l, origin, destiny)
+def test(test_points):
+    destiny = (0, 200) # 0, 0 and X0, Y0
+    curve_map = curve(X, Y, [(t[0]*1.5, t[1]*1.5) for t in test_points], destiny)
 
-    # line_x = [curve_points[i][0]*130/300 for i in range(len(curve_points))]
-    # line_y = [curve_points[i][1]*150/300 for i in range(len(curve_points))]
-    
-    # plt.plot(line_x, line_y, color="black")
-    plt.imshow(curve_map, cmap='viridis', aspect=130/150, origin='lower')
+    ang = curve_l(0, 0, destiny, test_points)
+    print(degrees(ang))
+
+    plt.imshow(curve_map, cmap='viridis', aspect=1, origin='lower')
     plt.colorbar()
     plt.tight_layout()
     plt.savefig("Heatmap.png")
@@ -145,37 +143,25 @@ def scan_callback(msg):
     global scan
     scan = msg.ranges
 
-SPEED = 0.3
+SPEED = 0.1
 
 def timer_callback():
-    # print(f'0*: {scan[0]}, 90*: {scan[90]}, 180*: {scan[180]}, 270*: {scan[270]}')
-    # msg = Twist()
-
-    # arc = scan[:50] + scan[310:]
 
     arc = [(i, n) for i , n in enumerate(scan) if n != inf]
     arc_points = [(-sin(radians(n[0])) * n[1], cos(radians(n[0])) * n[1]) for n in arc]
 
-    k = 500
-    global test_points
-    test_points = [(n[0] * k, n[1] * k) for n in arc_points]
-    test()
-    exit()
+    k = 100
+    points = [(n[0] * k, n[1] * k) for n in arc_points]
+    # test(points)
 
-    # distance_ahead = min(arc)
+    ang = curve_l(0, 0, (0, 200), points)
 
-    # print(distance_ahead)
+    msg = Twist()
 
-    # if distance_ahead < 0.2:
-    #     msg.linear.x = -SPEED
+    msg.linear.x = SPEED
+    msg.angular.z = (ang-pi/2)/2.5
 
-    # elif distance_ahead < 0.4:
-    #     msg.angular.z = SPEED
-
-    # else:
-    #     msg.linear.x = SPEED
-
-    # publisher.publish(msg)
+    publisher.publish(msg)
 
 def main(args=None):
 
@@ -192,7 +178,7 @@ def main(args=None):
     sub = node.create_subscription(LaserScan, 'scan', scan_callback, rclpy.qos.qos_profile_sensor_data)
     sub
 
-    timer = node.create_timer(0.5, timer_callback)
+    timer = node.create_timer(0.05, timer_callback)
     timer
 
     rclpy.spin(node)
